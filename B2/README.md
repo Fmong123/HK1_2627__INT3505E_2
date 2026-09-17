@@ -55,10 +55,36 @@
 ## Bài 3
 
 ![Kết quả 1 Bài 3](result_images/result1_bai3.png)
-![Kết quả 2 Bài 3](result_images/result1_bai3.png)
-![Kết quả 3 Bài 3](result_images/result1_bai3.png)
-![Kết quả 4 Bài 3](result_images/result1_bai3.png)
-![Kết quả 5 Bài 3](result_images/result1_bai3.png)
-![Kết quả 6 Bài 3](result_images/result1_bai3.png)
-![Kết quả 7 Bài 3](result_images/result1_bai3.png)
+![Kết quả 2 Bài 3](result_images/result2_bai3.png)
+
+**1. Kiểm tra phân trang và sinh liên kết HATEOAS:**
+- Trả về mã status 200 OK, header Cache-Control: public, max-age=30
+- Trả về list các cuốn sách với liên kết HATEOAS (first, last, next, self) và đối tượng pagination với total_pages: 9
+
+**2. Kiểm tra validation kiểu dữ liệu phân trang (page=hehe):**
+- Bắt lỗi tham số không hợp lệ, trả về mã lỗi 400 BAD REQUEST kèm thông báo {"error": "page and size must be int"}.
+
+![Kết quả 3 Bài 3](result_images/result3_bai3.png)
+![Kết quả 4 Bài 3](result_images/result4_bai3.png)
+
+**3. Kiểm tra danh sách sách có phân trang vượt quá số trang hiện có:**
+- Trả về 200 OK, trả về mảng rỗng vì không có quá 9 dữ liệu
+
+**4. Kiểm tra danh sách sách có phân trang vượt quá MAX_SIZE:** 
+- Tự động chuyển về size 100
+- Trả về 200 OK, trả về mảng rỗng vì không có quá 9 dữ liệu
+
+![Kết quả 5 Bài 3](result_images/result5_bai3.png)
+![Kết quả 6 Bài 3](result_images/result6_bai3.png)
+
+**5. Kiểm tra tìm kiếm theo từ khóa q=clean:**
+- Trả về 200 OK, lọc các cuốn sách có chứa từ khóa "clean" trong dữ liệu
+
+**6. Kiểm tra tìm kiếm theo tác giả:** 
+- Trả về 200 OK, lọc các cuốn sách có author = Robert C. Martin trong dữ liệu
+
+![Kết quả 7 Bài 3](result_images/result7_bai3.png)
+
+**7. Kiểm tra tìm kiếm kết hợp:**
+- Trả về 200 OK, lọc các cuốn sách page=1, size=10 và có chứa từ khóa "clean" trong dữ liệu
 

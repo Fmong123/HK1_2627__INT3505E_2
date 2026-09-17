@@ -45,7 +45,6 @@
   ![Kết quả GET Bài 6](result_images/result1_bai6.png)
 
 * **Test Result POST 201:**
-
   ![Kết quả POST 201 Bài 6](result_images/result2_bai6.png)
 
 * **Test Result PUT 200:**
