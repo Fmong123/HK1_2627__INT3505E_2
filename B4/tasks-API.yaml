@@ -1,0 +1,307 @@
+openapi: 3.0.3
+info:
+  title: Tasks API
+  version: 1.0.0
+  description: |
+    Quản lý task nội bộ. Bản thực hành hiện tại chưa triển khai xác thực token.
+    Lỗi trả về application/problem+json qua hàm problem().
+    Dữ liệu demo lưu trong bộ nhớ và mất khi khởi động lại app.
+servers:
+  - url: http://localhost:5001/v1
+security: []
+tags:
+  - name: tasks
+    description: Quản lý công việc
+paths:
+  /tasks:
+    get:
+      tags: [tasks]
+      summary: Danh sách task, giới hạn số lượng và lọc theo status
+      operationId: listTasks
+      parameters:
+        - $ref: '#/components/parameters/PageLimit'
+        - $ref: '#/components/parameters/StatusFilter'
+      responses:
+        '200':
+          $ref: '#/components/responses/TaskList'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: [tasks]
+      summary: Tạo task
+      operationId: createTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskInput'
+            example:
+              title: Viết báo cáo OpenAPI
+              status: open
+              priority: high
+              dueDate: '2026-10-20'
+              assigneeId: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '201':
+          description: Task đã được tạo
+          headers:
+            Location:
+              description: Đường dẫn đến task vừa tạo
+              schema:
+                type: string
+              example: /v1/tasks/123e4567-e89b-12d3-a456-426614174000
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /tasks/{taskId}:
+    parameters:
+      - $ref: '#/components/parameters/TaskId'
+    get:
+      tags: [tasks]
+      summary: Lấy một task theo UUID
+      operationId: getTaskById
+      responses:
+        '200':
+          $ref: '#/components/responses/Task'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags: [tasks]
+      summary: Cập nhật một phần task
+      operationId: patchTask
+      description: |
+        Chỉ cập nhật các trường được gửi. Không được sửa id.
+        Gửi null cho dueDate hoặc assigneeId để xóa giá trị đó.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskInput'
+            example:
+              status: done
+      responses:
+        '200':
+          $ref: '#/components/responses/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags: [tasks]
+      summary: Xóa task
+      operationId: deleteTask
+      responses:
+        '204':
+          description: Đã xóa thành công, không có response body
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Khai báo theo đề bài để bổ sung sau; chưa áp dụng trong bản thực hành hiện tại.
+  parameters:
+    TaskId:
+      in: path
+      name: taskId
+      required: true
+      description: UUID của task
+      schema:
+        type: string
+        format: uuid
+    PageLimit:
+      in: query
+      name: limit
+      description: Số task tối đa được trả về sau khi lọc
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    StatusFilter:
+      in: query
+      name: status
+      description: Chỉ trả về task có status này
+      schema:
+        $ref: '#/components/schemas/Task/properties/status'
+  schemas:
+    Task:
+      type: object
+      additionalProperties: false
+      required: [id, title, status, priority, dueDate, assigneeId]
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          example: 123e4567-e89b-12d3-a456-426614174000
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          pattern: '\S'
+          example: Viết báo cáo OpenAPI
+        status:
+          type: string
+          enum: [open, done]
+          example: open
+        priority:
+          type: string
+          enum: [low, normal, high]
+          example: high
+        dueDate:
+          type: string
+          format: date
+          nullable: true
+          example: '2026-10-20'
+        assigneeId:
+          type: string
+          format: uuid
+          nullable: true
+          example: 550e8400-e29b-41d4-a716-446655440000
+    CreateTaskInput:
+      type: object
+      additionalProperties: false
+      required: [title]
+      properties:
+        title:
+          $ref: '#/components/schemas/Task/properties/title'
+        status:
+          type: string
+          enum: [open, done]
+          default: open
+        priority:
+          type: string
+          enum: [low, normal, high]
+          default: normal
+        dueDate:
+          $ref: '#/components/schemas/Task/properties/dueDate'
+        assigneeId:
+          $ref: '#/components/schemas/Task/properties/assigneeId'
+    UpdateTaskInput:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        title:
+          $ref: '#/components/schemas/Task/properties/title'
+        status:
+          $ref: '#/components/schemas/Task/properties/status'
+        priority:
+          $ref: '#/components/schemas/Task/properties/priority'
+        dueDate:
+          $ref: '#/components/schemas/Task/properties/dueDate'
+        assigneeId:
+          $ref: '#/components/schemas/Task/properties/assigneeId'
+    TaskList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Task'
+      example: []
+    Problem:
+      type: object
+      additionalProperties: false
+      required: [type, title, status, detail, instance]
+      properties:
+        type:
+          type: string
+          format: uri
+          example: https://example.vn/errors/task-not-found
+        title:
+          type: string
+          example: Task not found
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+          example: 404
+        detail:
+          type: string
+          example: Task không tồn tại.
+        instance:
+          type: string
+          example: /v1/tasks/123e4567-e89b-12d3-a456-426614174000
+  responses:
+    Task:
+      description: Thông tin task
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Task'
+    TaskList:
+      description: Mảng task sau khi lọc, tối đa limit phần tử
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TaskList'
+    NotFound:
+      description: Không tìm thấy task
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            type: https://example.vn/errors/task-not-found
+            title: Task not found
+            status: 404
+            detail: Task không tồn tại.
+            instance: /v1/tasks/123e4567-e89b-12d3-a456-426614174000
+    ValidationError:
+      description: Body, taskId, limit hoặc status không hợp lệ
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            type: https://example.vn/errors/validation-error
+            title: Validation error
+            status: 422
+            detail: title là bắt buộc.
+            instance: /v1/tasks
+    BadRequest:
+      description: Body JSON sai cú pháp
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    UnsupportedMediaType:
+      description: Content-Type phải là application/json
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    InternalServerError:
+      description: Lỗi server, không trả chi tiết nội bộ cho client
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
