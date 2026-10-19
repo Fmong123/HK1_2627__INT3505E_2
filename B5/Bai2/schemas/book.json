@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CreateBook",
+  "type": "object",
+  "required": ["title", "isbn", "price", "genre"],
+  "properties": {
+    "title": {"type": "string", "minLength": 1, "maxLength": 200, "pattern": "\\S"},
+    "isbn": {"type": "string", "pattern": "^[0-9]{13}$", "minLength": 13, "maxLength": 13},
+    "price": {"type": "integer", "minimum": 0, "maximum": 2147483647},
+    "stock": {"type": "integer", "minimum": 0, "maximum": 2147483647},
+    "genre": {"type": "string", "minLength": 1, "maxLength": 50, "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"}
+  },
+  "additionalProperties": false
+}

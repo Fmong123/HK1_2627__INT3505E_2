@@ -1,0 +1,433 @@
+{
+  "info": {
+    "name": "B5 - Bai2 Books API",
+    "description": "Run the full collection in order. The first four requests add books with a new genre and ISBNs for each run. Checks cover offset, cursor, genre, multi-key sort, ties and invalid inputs. Start the Flask API first.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:5000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01. POST - Them Python (1)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const runId = Date.now().toString().slice(-9);",
+              "pm.collectionVariables.set(\"genre\", \"test-\" + runId);",
+              "pm.collectionVariables.set(\"isbn_prefix\", \"978\" + runId);",
+              "pm.collectionVariables.unset(\"next_cursor\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Du lieu sach dung\", function () { pm.expect(body.title).to.eql(\"Python\"); pm.expect(body.price).to.eql(120000); pm.expect(body.genre).to.eql(pm.collectionVariables.get(\"genre\")); });",
+              "pm.collectionVariables.set(\"python_id\", body.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/books",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Python\",\n  \"isbn\": \"{{isbn_prefix}}1\",\n  \"price\": 120000,\n  \"genre\": \"{{genre}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "02. POST - Them Flask (2)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Du lieu sach dung\", function () { pm.expect(body.title).to.eql(\"Flask\"); pm.expect(body.price).to.eql(150000); pm.expect(body.genre).to.eql(pm.collectionVariables.get(\"genre\")); });",
+              "pm.collectionVariables.set(\"flask1_id\", body.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/books",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Flask\",\n  \"isbn\": \"{{isbn_prefix}}2\",\n  \"price\": 150000,\n  \"genre\": \"{{genre}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "03. POST - Them Flask (3)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Du lieu sach dung\", function () { pm.expect(body.title).to.eql(\"Flask\"); pm.expect(body.price).to.eql(150000); pm.expect(body.genre).to.eql(pm.collectionVariables.get(\"genre\")); });",
+              "pm.collectionVariables.set(\"flask2_id\", body.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/books",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Flask\",\n  \"isbn\": \"{{isbn_prefix}}3\",\n  \"price\": 150000,\n  \"genre\": \"{{genre}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "04. POST - Them API (4)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Du lieu sach dung\", function () { pm.expect(body.title).to.eql(\"API\"); pm.expect(body.price).to.eql(150000); pm.expect(body.genre).to.eql(pm.collectionVariables.get(\"genre\")); });",
+              "pm.collectionVariables.set(\"api_id\", body.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/books",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"API\",\n  \"isbn\": \"{{isbn_prefix}}4\",\n  \"price\": 150000,\n  \"genre\": \"{{genre}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "05. GET - Offset trang 1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Dung sach va thu tu\", function () { pm.expect(body.data.map(b => b.id)).to.eql([pm.collectionVariables.get(\"python_id\"), pm.collectionVariables.get(\"flask1_id\")]); });",
+              "pm.test(\"Tong 4 sach, con trang sau\", function () { pm.expect(body.pagination.total).to.eql(4); pm.expect(body.pagination.has_next).to.eql(true); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?strategy=offset&genre={{genre}}&sort=id&offset=0&limit=2"
+      }
+    },
+    {
+      "name": "06. GET - Offset trang 2",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Dung sach va thu tu\", function () { pm.expect(body.data.map(b => b.id)).to.eql([pm.collectionVariables.get(\"flask2_id\"), pm.collectionVariables.get(\"api_id\")]); });",
+              "pm.test(\"Trang cuoi\", function () { pm.expect(body.pagination.total).to.eql(4); pm.expect(body.pagination.has_next).to.eql(false); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?strategy=offset&genre={{genre}}&sort=id&offset=2&limit=2"
+      }
+    },
+    {
+      "name": "07. GET - Genre va sort nhieu truong",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Dung sach va thu tu\", function () { pm.expect(body.data.map(b => b.id)).to.eql([pm.collectionVariables.get(\"api_id\"), pm.collectionVariables.get(\"flask1_id\"), pm.collectionVariables.get(\"flask2_id\"), pm.collectionVariables.get(\"python_id\")]); });",
+              "pm.test(\"Chi tra dung genre\", function () { pm.expect(body.data.every(b => b.genre === pm.collectionVariables.get(\"genre\"))).to.eql(true); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?genre={{genre}}&sort=-price,title"
+      }
+    },
+    {
+      "name": "08. GET - Cursor trang 1",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Dung sach va thu tu\", function () { pm.expect(body.data.map(b => b.id)).to.eql([pm.collectionVariables.get(\"api_id\"), pm.collectionVariables.get(\"flask1_id\")]); });",
+              "pm.test(\"Co cursor trang tiep\", function () { pm.expect(body.pagination.has_more).to.eql(true); pm.expect(body.pagination.next_cursor).to.be.a(\"string\").and.not.empty; });",
+              "pm.collectionVariables.set(\"next_cursor\", body.pagination.next_cursor);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?strategy=cursor&genre={{genre}}&sort=-price,title&limit=2"
+      }
+    },
+    {
+      "name": "09. GET - Cursor trang 2",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Dung sach va thu tu\", function () { pm.expect(body.data.map(b => b.id)).to.eql([pm.collectionVariables.get(\"flask2_id\"), pm.collectionVariables.get(\"python_id\")]); });",
+              "pm.test(\"Trang cuoi, khong bo sot sach trung gia va ten\", function () { pm.expect(body.pagination.has_more).to.eql(false); pm.expect(body.pagination.next_cursor).to.eql(null); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?strategy=cursor&genre={{genre}}&sort=-price,title&limit=2&cursor={{next_cursor}}"
+      }
+    },
+    {
+      "name": "10. GET - Genre khong co sach",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Danh sach rong\", function () { pm.expect(body.data).to.eql([]); pm.expect(body.pagination.total).to.eql(0); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?genre={{genre}}-missing"
+      }
+    },
+    {
+      "name": "11. GET - Strategy sai",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Co thong bao loi\", function () { pm.expect(body.error).to.be.a(\"string\").and.not.empty; });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?strategy=abc"
+      }
+    },
+    {
+      "name": "12. GET - Limit sai",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Co thong bao loi\", function () { pm.expect(body.error).to.be.a(\"string\").and.not.empty; });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?limit=0"
+      }
+    },
+    {
+      "name": "13. GET - Sort sai",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Co thong bao loi\", function () { pm.expect(body.error).to.be.a(\"string\").and.not.empty; });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?sort=foo"
+      }
+    },
+    {
+      "name": "14. GET - Cursor sai",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Co thong bao loi\", function () { pm.expect(body.error).to.be.a(\"string\").and.not.empty; });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?strategy=cursor&cursor=abc"
+      }
+    },
+    {
+      "name": "15. GET - Doi sort khi dung cursor cu",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Co thong bao loi\", function () { pm.expect(body.error).to.be.a(\"string\").and.not.empty; });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/books?strategy=cursor&genre={{genre}}&sort=id&cursor={{next_cursor}}"
+      }
+    },
+    {
+      "name": "16. POST - Du lieu sai schema",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });",
+              "const body = pm.response.json();",
+              "pm.test(\"Tu choi du lieu sai\", function () { pm.expect(body.error).to.be.a(\"string\").and.not.empty; });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/books",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Book\",\n  \"price\": -1,\n  \"genre\": \"{{genre}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

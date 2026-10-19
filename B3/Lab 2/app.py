@@ -62,7 +62,7 @@ def handle_unexpected(error):
     )
 
 
-@app.get("/resources/<int:resource_id>")
+@app.route("/resources/<int:resource_id>", methods=["GET"])
 def get_resource(resource_id):
     raise ApiProblem(
         status=404,
@@ -73,7 +73,7 @@ def get_resource(resource_id):
     )
 
 
-@app.get("/crash")
+@app.route("/crash", methods=["GET"])
 def crash():
     raise RuntimeError("Internal error details for server logs only")
 
