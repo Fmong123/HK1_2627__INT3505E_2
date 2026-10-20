@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Member",
+  "type": "object",
+  "required": ["id", "full_name", "email"],
+  "properties": {
+    "id": {"type": "integer", "minimum": 1},
+    "full_name": {"type": "string", "minLength": 1, "maxLength": 100},
+    "email": {"type": "string", "format": "email"},
+    "phone": {"type": "string", "minLength": 1, "maxLength": 20}
+  },
+  "additionalProperties": false
+}

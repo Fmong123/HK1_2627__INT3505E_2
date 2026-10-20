@@ -6,21 +6,21 @@ Hoàn thiện `list_books` với phân trang offset và cursor, lọc theo `genr
 
 ### Kết quả test bằng curl
 
-![Kết quả GET danh sách sách](Bai2/images/Test_result1.png)
+![Kết quả GET danh sách sách](Bai%202/images/Test_result1.png)
 
 **1. Lấy danh sách sách — GET /api/v1/books:**
 
 - Trả về `200 OK`, body chứa danh sách sách trong `data`.
 - Mặc định sort theo `-id`, sách có ID lớn nhất xuất hiện trước.
 
-![Thông tin phân trang mặc định](Bai2/images/Test_result2.png)
+![Thông tin phân trang mặc định](Bai%202/images/Test_result2.png)
 
 **2. Kiểm tra thông tin phân trang mặc định:**
 
 - Response có `strategy: "offset"`, `offset: 0` và `limit: 20`.
 - Tại thời điểm chụp ảnh, database có `total: 16`; `has_next: false` vì không còn trang tiếp theo.
 
-![Kết quả phân trang offset](Bai2/images/Test_result3.png)
+![Kết quả phân trang offset](Bai%202/images/Test_result3.png)
 
 **3. Kiểm tra phân trang bằng offset:**
 
@@ -28,7 +28,7 @@ Hoàn thiện `list_books` với phân trang offset và cursor, lọc theo `genr
 - Bỏ qua 2 sách đầu, trả về `book_3` và `book_4` theo ID tăng dần.
 - `has_next: true` vì vẫn còn dữ liệu ở trang tiếp theo.
 
-![Kết quả cursor trang đầu kết hợp lọc và sort](Bai2/images/Test_result5.png)
+![Kết quả cursor trang đầu kết hợp lọc và sort](Bai%202/images/Test_result5.png)
 
 **4. Kiểm tra cursor kết hợp lọc genre và sort nhiều trường:**
 
@@ -37,7 +37,7 @@ Hoàn thiện `list_books` với phân trang offset và cursor, lọc theo `genr
 - Trang đầu trả về `book_6` giá 200000 và `book_2` giá 150000.
 - Response có `has_more: true` và `next_cursor` để lấy trang tiếp theo.
 
-![Kết quả cursor trang tiếp theo](Bai2/images/Test_result6.png)
+![Kết quả cursor trang tiếp theo](Bai%202/images/Test_result6.png)
 
 **5. Kiểm tra lấy trang tiếp theo bằng cursor:**
 
@@ -46,7 +46,7 @@ Hoàn thiện `list_books` với phân trang offset và cursor, lọc theo `genr
 - `book_2` và `book_3` trùng cả giá lẫn tên nhưng vẫn được lấy đủ nhờ khóa phụ `id`.
 - `has_more: true` cho biết vẫn còn trang tiếp theo.
 
-![Kết quả kiểm tra tham số sai](Bai2/images/Test_result7.png)
+![Kết quả kiểm tra tham số sai](Bai%202/images/Test_result7.png)
 
 **6. Kiểm tra tham số không hợp lệ:**
 
@@ -58,9 +58,9 @@ Hoàn thiện `list_books` với phân trang offset và cursor, lọc theo `genr
 
 ### Kết quả test bằng Postman CLI
 
-Collection: [books.postman_collection.json](Bai2/books.postman_collection.json).
+Collection: [books.postman_collection.json](Bai%202/books.postman_collection.json).
 
-![Kết quả Postman thêm sách và kiểm tra phân trang](Bai2/images/Postman1.png)
+![Kết quả Postman thêm sách và kiểm tra phân trang](Bai%202/images/Postman1.png)
 
 **1. Thêm dữ liệu và kiểm tra các chức năng chính:**
 
@@ -69,7 +69,7 @@ Collection: [books.postman_collection.json](Bai2/books.postman_collection.json).
 - Các kiểm tra dữ liệu và thứ tự sách đều đạt.
 - Mỗi lần chạy collection dùng ISBN và genre mới để không trùng dữ liệu test của lần chạy trước.
 
-![Kết quả Postman kiểm tra lỗi và bảng tổng kết](Bai2/images/Postman2.png)
+![Kết quả Postman kiểm tra lỗi và bảng tổng kết](Bai%202/images/Postman2.png)
 
 **2. Kiểm tra cursor, dữ liệu rỗng, lỗi đầu vào và tổng kết:**
 

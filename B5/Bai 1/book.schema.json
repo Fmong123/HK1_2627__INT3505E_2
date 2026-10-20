@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Book",
+  "type": "object",
+  "required": ["id", "title", "isbn", "category_id", "author_ids"],
+  "properties": {
+    "id": {"type": "integer", "minimum": 1},
+    "title": {"type": "string", "minLength": 1, "maxLength": 200},
+    "isbn": {"type": "string", "pattern": "^[0-9]{13}$", "maxLength": 13},
+    "published_year": {"type": "integer", "minimum": 1},
+    "category_id": {"type": "integer", "minimum": 1},
+    "author_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 1}
+    }
+  },
+  "additionalProperties": false
+}
