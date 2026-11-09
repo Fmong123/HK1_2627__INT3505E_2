@@ -1,0 +1,88 @@
+openapi: 3.0.3
+info:
+  title: Product API - Design-first
+  version: 1.0.0
+paths:
+  /products:
+    get:
+      operationId: design_first.api.products.list_products
+      responses:
+        '200':
+          description: Danh sách sản phẩm
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    post:
+      operationId: design_first.api.products.create_product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductIn'
+      responses:
+        '201':
+          description: Đã tạo sản phẩm
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Body không hợp lệ
+        '415':
+          description: Content-Type không được hỗ trợ
+  /products/{id}:
+    get:
+      operationId: design_first.api.products.get_product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Chi tiết sản phẩm
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Không tìm thấy sản phẩm
+components:
+  schemas:
+    ProductIn:
+      type: object
+      additionalProperties: false
+      required: [sku, name, price_cents]
+      properties:
+        sku:
+          type: string
+          minLength: 3
+          maxLength: 32
+          example: KB001
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: Bàn phím
+        price_cents:
+          type: integer
+          minimum: 0
+          maximum: 2147483647
+          example: 25000
+    Product:
+      type: object
+      required: [id, sku, name, price_cents]
+      properties:
+        id:
+          type: integer
+        sku:
+          type: string
+        name:
+          type: string
+        price_cents:
+          type: integer

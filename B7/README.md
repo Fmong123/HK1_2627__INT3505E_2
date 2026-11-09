@@ -63,3 +63,46 @@
 - Test GET orders có eager loading đạt: tạo 5 đơn, mỗi đơn 3 sản phẩm và kiểm tra chỉ có 2 truy vấn SELECT để tránh N+1.
 - Các test health check, JSON sai cú pháp và lệnh tạo dữ liệu mẫu cũng đạt.
 
+## Đóng gói và kiểm thử bằng Docker
+
+Service được đóng gói bằng [Dockerfile](Dockerfile) và [docker-compose.yml](docker-compose.yml). Dockerfile cài các thư viện từ `requirements.txt`, chạy ứng dụng bằng Gunicorn với user `app`. Compose cấu hình cổng `5000:5000`, biến môi trường `DB_URL=sqlite:////data/lab7.db`, volume `lab7_data` lưu database và healthcheck qua `/ready`.
+
+![Build image và khởi động service bằng Docker Compose](images/result8.png)
+
+**8. Build và khởi động container:**
+
+```powershell
+docker compose up --build -d
+```
+
+- Build thành công image `b7-api` từ Dockerfile.
+- Docker Compose tạo volume `b7_lab7_data`, network `b7_default` và khởi động container `b7-api-1`.
+
+![Container healthy, khởi tạo dữ liệu mẫu và kiểm tra API](images/result9.png)
+
+**9. Kiểm tra service và database trong Docker:**
+
+```powershell
+docker compose exec api flask --app app seed-db
+docker compose ps
+curl.exe -i http://localhost:5000/ready
+curl.exe -i http://localhost:5000/api/v1/products
+```
+
+- Lệnh tạo dữ liệu mẫu trả về `Sample products ready.`.
+- Container `b7-api-1` có trạng thái `healthy`, công khai cổng `5000`.
+- `GET /ready` trả về `200 OK`, có `status: "ok"` và `checks.db: "ok"`.
+- `GET /api/v1/products` trả về `200 OK` cùng dữ liệu sản phẩm mẫu; response có header `Server: gunicorn`.
+
+![Kết quả chạy pytest bên trong container Docker](images/result10.png)
+
+**10. Kiểm thử tự động trong container:**
+
+```powershell
+docker compose exec api python -m pytest -q
+```
+
+- Kết quả **20 passed, 1 warning in 0.94s**, không có test thất bại.
+- Cảnh báo `PytestCacheWarning` do pytest không có quyền ghi cache tại `/app/.pytest_cache`; không ảnh hưởng kết quả kiểm thử. Có thể chạy `docker compose exec api python -m pytest -v -p no:cacheprovider` để tắt cache và hiển thị tên từng test.
+
+
