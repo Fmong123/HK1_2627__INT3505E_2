@@ -12,3 +12,8 @@ __pycache__/
 
 # Environment Variables
 .env
+
+# Local Git history backups and test artifacts
+.git-backup/
+.pytest_cache/
+.DS_Store
