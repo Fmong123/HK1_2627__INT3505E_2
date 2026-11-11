@@ -71,7 +71,10 @@ spectral lint openapi.yaml --ruleset .spectral.yml
 
 Kết quả chạy Spectral Lab 2:
 
+- Trước khi sửa OpenAPI:
 ![Kết quả Spectral Lab 2 lần 1](images/result1_lab2.png)
+
+- Sau khi sửa OpenAPI:
 
 ![Kết quả Spectral Lab 2 lần 2](images/result2_lab2.png)
 
