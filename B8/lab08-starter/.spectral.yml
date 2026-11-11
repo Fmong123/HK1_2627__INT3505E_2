@@ -1,0 +1,59 @@
+extends: ["spectral:oas"]
+
+rules:
+  operation-operationId: error
+
+  # HTTP 204 must not declare a response body.
+  no-content-in-204:
+    description: Response 204 must not declare a body.
+    severity: error
+    given: "$.paths[*][*].responses['204']"
+    then:
+      field: content
+      function: undefined
+
+  # Match the integer year used by the Book model.
+  book-year-integer:
+    description: Book.year must be an integer.
+    severity: error
+    given: "$.components.schemas.Book.properties.year"
+    then:
+      field: type
+      function: enumeration
+      functionOptions:
+        values: [integer]
+
+  # Check object fields, or the fields of array items, after resolving $ref.
+  response-200-nonempty-schema:
+    description: Response 200 must describe at least one object field.
+    severity: error
+    given: "$.paths[*][*].responses['200']"
+    then:
+      - field: content.application/json.schema
+        function: truthy
+      - field: content.application/json.schema
+        function: schema
+        functionOptions:
+          schema:
+            type: object
+            anyOf:
+              - required: [type, properties]
+                properties:
+                  type:
+                    const: object
+                  properties:
+                    type: object
+                    minProperties: 1
+              - required: [type, items]
+                properties:
+                  type:
+                    const: array
+                  items:
+                    type: object
+                    required: [type, properties]
+                    properties:
+                      type:
+                        const: object
+                      properties:
+                        type: object
+                        minProperties: 1

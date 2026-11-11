@@ -52,7 +52,7 @@ Hai smoke test có sẵn nhằm xác nhận starter hoạt động. Hãy viết 
 
 Kết quả chạy test Lab 1:
 
-![Kết quả chạy pytest Lab 1](tests/result.png)
+![Kết quả chạy pytest Lab 1](images/result_lab1.png)
 
 ## 3. Lab 2 — OpenAPI/Spectral
 
@@ -68,6 +68,12 @@ spectral lint openapi.yaml --ruleset .spectral.yml
 ```
 
 `.spectral.yml` đã có hai rule riêng kiểm tra (2) và (3); `spectral:oas` kiểm tra các quy tắc nền, bao gồm operationId. Hãy sửa 3 lỗi trong spec và **tự bổ sung custom rule** kiểm tra response 200 có schema không rỗng. Lưu ý: Spectral linter không tự đối chiếu code Flask; một spec hợp lệ vẫn có thể khác hành vi thực tế. Hãy dùng pytest + jsonschema để kiểm chứng response.
+
+Kết quả chạy Spectral Lab 2:
+
+![Kết quả Spectral Lab 2 lần 1](images/result1_lab2.png)
+
+![Kết quả Spectral Lab 2 lần 2](images/result2_lab2.png)
 
 ## 4. Lab 3 — Postman/Newman
 
