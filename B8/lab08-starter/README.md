@@ -115,6 +115,33 @@ locust -f performance/locustfile.py --headless -H http://127.0.0.1:5000 \
 
 Hoàn thiện TODO `search_by_year` và nếu tạo 1% failure giả lập, **ghi rõ** đó là HTTP 500 do server phát hay client-side `response.failure()` của Locust. Điền `performance/analysis.md` bằng kết quả **đo thực tế**; báo cáo p95, failure rate, RPS, nhận xét giới hạn phép đo. Load test chạy Flask development server + SQLite chỉ có ý nghĩa thực hành, không thể khẳng định SLO production.
 
+Kết quả chạy Locust Lab 4:
+
+| Kịch bản | Users | p95 tổng (ms) | Failure rate tổng | RPS |
+|---|---:|---:|---:|---:|
+| A | 10 | 92 | 0,000% | 5,06 |
+| B | 50 | 62 | 0,216% | 23,34 |
+| C | 200 | 210 | 0,071% | 95,15 |
+
+Các lỗi ở B và C đều là lỗi giả lập phía Locust; HTTP thực tế vẫn là 200.
+Cả ba đạt p95 tổng < 300 ms, nhưng POST ở A được báo là 300 ms và ở C
+là 570 ms nên chưa thể kết luận mọi endpoint đều đạt ngưỡng này.
+
+- Kịch bản A — 10 user, spawn rate 2, 30 giây:
+
+![Kết quả chạy Locust Lab 4 kịch bản A](images/resultA_lab4.png)
+
+- Kịch bản B — 50 user, spawn rate 5, 60 giây:
+
+![Kết quả chạy Locust Lab 4 kịch bản B](images/resultB_lab4.png)
+
+- Kịch bản C — 200 user, spawn rate 50, 30 giây:
+
+![Kết quả chạy Locust Lab 4 kịch bản C](images/resultC_lab4.png)
+
+Báo cáo HTML: [A](reports/A.html), [B](reports/B.html), [C](reports/C.html).
+Phân tích số liệu, SLO và câu hỏi bonus: [performance/analysis.md](performance/analysis.md).
+
 ## 6. Cấu trúc thư mục
 
 ```text

@@ -1,4 +1,7 @@
-"""Lab 4 starter: weighted tasks, optional 404, no deliberate server errors.
+"""Lab 4: weighted tasks, year filtering, and client-side simulated failures.
+
+One percent of valid year-search responses are marked as failed by Locust.
+This simulates an error for the exercise; the API still returns HTTP 200.
 
 Run: locust -f performance/locustfile.py --headless -H http://127.0.0.1:5000 \
          -u 10 -r 2 -t 30s --html reports/A.html
@@ -9,6 +12,8 @@ import random
 from locust import HttpUser, between, task
 
 _counter = itertools.count(1)
+SEARCH_YEARS = (1996, 2017, 2021, 2025)
+SIMULATED_FAILURE_RATE = 0.01
 
 
 class BooksUser(HttpUser):
@@ -35,9 +40,45 @@ class BooksUser(HttpUser):
         unique = next(_counter)
         self.client.post(
             "/books",
-            json={"title": f"Load test {unique}", "author": "locust"},
+            json={
+                "title": f"Load test {unique}",
+                "author": "locust",
+                "year": random.choice(SEARCH_YEARS),
+            },
             name="POST /books",
         )
 
-    # LAB 4: add search_by_year() and explain any injected failures.
-    # A client-side artificial failure is not a real HTTP 500 from the server.
+    @task(1)
+    def search_by_year(self):
+        year = random.choice(SEARCH_YEARS)
+        with self.client.get(
+            "/books",
+            params={"year": year},
+            name="GET /books?year={year}",
+            catch_response=True,
+        ) as response:
+            # Let Locust report connection errors and timeouts as real failures.
+            if getattr(response, "error", None):
+                return
+            if response.status_code != 200:
+                response.failure(f"Year search returned HTTP {response.status_code}")
+                return
+
+            try:
+                books = response.json()
+            except ValueError:
+                response.failure("Year search returned invalid JSON")
+                return
+
+            if not isinstance(books, list) or any(
+                not isinstance(book, dict) or book.get("year") != year
+                for book in books
+            ):
+                response.failure("Year search returned an invalid list or wrong year")
+                return
+
+            # This changes Locust's result only, not the HTTP status from Flask.
+            if random.random() < SIMULATED_FAILURE_RATE:
+                response.failure("SIMULATED_500 (client-side only; actual HTTP 200)")
+            else:
+                response.success()
