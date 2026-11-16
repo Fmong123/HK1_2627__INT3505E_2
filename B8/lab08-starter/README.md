@@ -95,6 +95,10 @@ newman run books-api.postman_collection.json \
 
 Lưu ý: cần chạy server trước. `data.csv` là dữ liệu ví dụ để thực hành data-driven iteration; khi sử dụng `-d data.csv`, collection sẽ lặp theo số hàng. Đừng hard-code credentials/tokens trong file đẩy lên Git.
 
+Kết quả chạy Newman Lab 3:
+
+![Kết quả chạy Newman Lab 3](images/result_lab3.png)
+
 ## 5. Lab 4 — Locust
 
 `performance/locustfile.py` là baseline có weighted tasks; `performance/locustfile_realistic.py` minh hoạ flow có state và demo login. Chạy API trong terminal 1; terminal 2:
